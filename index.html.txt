@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Alchemist | Blue Ocean Edition v17</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --midnight: #0f172a; --slate: #475569; --accent: #6366f1;
+            --emerald: #10b981; --rose: #f43f5e; --amber: #f59e0b;
+            --sky: #0ea5e9; /* Blue Ocean Color */
+            --bg: #f8fafc; --surface: #ffffff; --border: #e2e8f0;
+        }
+
+        * { box-sizing: border-box; outline: none; }
+        body { 
+            margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: var(--bg); color: var(--midnight); 
+            height: 100vh; display: flex; flex-direction: column; overflow: hidden; 
+            min-width: 1200px;
+        }
+
+        /* HEADER */
+        nav {
+            height: 65px; background: white; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between; padding: 0 30px;
+            flex-shrink: 0; z-index: 100;
+        }
+        .logo { font-weight: 800; font-size: 1.2rem; letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px; }
+        .logo span { color: var(--accent); }
+        .logo-badge { background: var(--midnight); color: white; font-size: 0.6rem; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.1em; }
+        .btn { padding: 8px 16px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: 0.2s; border: 1px solid var(--border); background: white; color: var(--slate); }
+        .btn-primary { background: var(--midnight); color: white; border: none; display: flex; align-items: center; gap: 8px; }
+        .btn-primary:hover { background: var(--accent); transform: translateY(-1px); }
+
+        /* LAYOUT */
+        .layout-grid { display: grid; grid-template-columns: 350px 500px 1fr; flex: 1; overflow: hidden; }
+
+        /* COL 1: INPUTS */
+        .col-inputs { background: white; border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; }
+        .label { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--slate); letter-spacing: 0.05em; margin-bottom: 5px; display: block; }
+        textarea { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 12px; font-family: inherit; font-size: 0.85rem; line-height: 1.5; resize: none; background: #fcfcfd; transition: 0.2s; flex: 1; color: var(--midnight); }
+        textarea:focus { border-color: var(--accent); background: white; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); }
+
+        /* COL 2: AUDIT */
+        .col-audit { background: var(--bg); padding: 25px; overflow-y: auto; border-right: 1px solid var(--border); }
+        
+        .scorecard { background: white; border-radius: 16px; padding: 20px; border: 1px solid var(--border); display: flex; align-items: center; gap: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 20px; }
+        .score-circle { position: relative; width: 70px; height: 70px; flex-shrink: 0; }
+        .score-circle svg { transform: rotate(-90deg); width: 70px; height: 70px; }
+        .circle-bg { fill: none; stroke: #f1f5f9; stroke-width: 8; }
+        .circle-fill { fill: none; stroke: var(--midnight); stroke-width: 8; stroke-linecap: round; stroke-dasharray: 176; stroke-dashoffset: 176; transition: 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .score-val { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; }
+
+        /* SENIORITY METER */
+        .seniority-box { background: linear-gradient(135deg, #1e293b, #0f172a); color: white; border-radius: 12px; padding: 15px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .sen-level { font-size: 1.2rem; font-weight: 800; color: var(--emerald); }
+        .sen-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8; margin-bottom: 4px; }
+        .sen-advice { font-size: 0.75rem; opacity: 0.9; margin-top: 5px; font-style: italic; }
+
+        /* GEMS & FIXES */
+        .gem { background: white; border-radius: 10px; padding: 15px; border-left: 4px solid var(--border); margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
+        .gem-crit { border-left-color: var(--rose); }
+        .gem-warn { border-left-color: var(--amber); }
+        .gem-good { border-left-color: var(--emerald); }
+        .gem-blue { border-left-color: var(--sky); background: #f0f9ff; } /* Blue Ocean Style */
+        
+        .gem-title { font-weight: 800; font-size: 0.9rem; margin-bottom: 6px; color: var(--midnight); display: flex; justify-content: space-between; }
+        .gem-body { font-size: 0.85rem; color: var(--slate); line-height: 1.5; }
+        .gem-fix { margin-top: 10px; background: #f8fafc; padding: 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; border: 1px solid var(--border); color: var(--accent); }
+        
+        .btn-fix { margin-top: 10px; padding: 8px 12px; background: var(--midnight); color: white; border-radius: 6px; font-size: 0.75rem; font-weight: 700; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition:0.2s; }
+        .btn-fix:hover { background: var(--accent); transform:translateY(-1px); }
+
+        /* COL 3: INTERVIEW */
+        .col-interview { background: #1e293b; color: white; padding: 0; display: flex; flex-direction: column; overflow: hidden; }
+        .int-header-box { padding: 25px; border-bottom: 1px solid #334155; background: #0f172a; }
+        .int-title { font-size: 1.1rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 10px; }
+        .int-scroll { padding: 25px; overflow-y: auto; flex: 1; }
+        .int-card { background: #334155; border-radius: 12px; margin-bottom: 25px; border: 1px solid #475569; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); }
+        .int-card-head { padding: 15px 20px; background: #0f172a; border-bottom: 1px solid #475569; display: flex; justify-content: space-between; align-items: center; }
+        .int-type { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--accent); letter-spacing: 0.05em; }
+        .int-q-box { padding: 20px; border-bottom: 1px solid #475569; }
+        .int-q { font-size: 1.05rem; font-weight: 600; line-height: 1.5; color: white; font-style: italic; }
+        .int-meta { padding: 20px; background: #1e293b; }
+        .meta-row { display: flex; margin-bottom: 15px; gap: 15px; }
+        .green-flag { color: var(--emerald); } .red-flag { color: var(--rose); } .blue-flag { color: #60a5fa; }
+        .meta-content h4 { margin: 0 0 4px 0; font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
+        .meta-content p { margin: 0; font-size: 0.85rem; color: #e2e8f0; line-height: 1.4; }
+
+        /* MODAL */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(5px); z-index: 500; display: none; align-items: center; justify-content: center; }
+        .modal { background: white; width: 600px; max-width: 90%; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); overflow: hidden; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-header { padding: 20px 30px; background: #f8fafc; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .modal-title { font-weight: 800; font-size: 1.1rem; color: var(--midnight); }
+        .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--slate); }
+        .modal-body { padding: 30px; }
+        .chat-input { width: 100%; border: 2px solid var(--border); border-radius: 8px; padding: 12px; font-family: inherit; margin-bottom: 15px; }
+        .chat-input:focus { border-color: var(--accent); }
+        .result-box { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 8px; margin-top: 20px; display: none; position: relative; }
+        .result-text { font-family: monospace; font-size: 0.9rem; color: #166534; background: white; padding: 10px; border-radius: 4px; border: 1px solid #bbf7d0; margin-top: 10px; white-space: pre-wrap; }
+        .copy-btn { position: absolute; top: 15px; right: 15px; background: white; border: 1px solid #bbf7d0; padding: 5px 10px; font-size: 0.7rem; border-radius: 4px; cursor: pointer; font-weight: 700; color: #166534; }
+        .copy-btn:hover { background: #dcfce7; }
+
+        /* PDF HIDDEN */
+        #printable-report { display: none; }
+        #loader { display:none; position:fixed; inset:0; background:rgba(255,255,255,0.9); backdrop-filter:blur(5px); z-index:200; align-items:center; justify-content:center; flex-direction: column; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #f1f5f9; border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="modal-overlay" id="consultant-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title-text">👨‍💼 The Auto-Consultant</div>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modal-content-area">
+                </div>
+        </div>
+    </div>
+
+    <div id="loader"><div class="spinner"></div><p style="margin-top:15px; font-weight:700;">Analyzing Seniority & Structure...</p></div>
+
+    <nav>
+        <div class="logo">💎 Career<span>Alchemist</span> <span class="logo-badge">Blue Ocean V17.0</span></div>
+        <div>
+            <button class="btn" onclick="location.reload()">Clear All</button>
+            <button class="btn btn-primary" onclick="window.print()" style="margin-left:10px;">Download Report</button>
+        </div>
+    </nav>
+
+    <div class="layout-grid">
+        <div class="col-inputs">
+            <div style="flex: 1; display: flex; flex-direction: column;">
+                <label class="label">1. Candidate CV Content</label>
+                <textarea id="cv" placeholder="Paste full CV text here..."></textarea>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column;">
+                <label class="label">2. Target Job Description</label>
+                <textarea id="jd" placeholder="Paste the target Job Spec here..."></textarea>
+            </div>
+            <button class="btn btn-primary" style="padding:15px; font-size:1rem; justify-content:center;" onclick="runAnalysis()">Run Master Audit</button>
+        </div>
+
+        <div class="col-audit" id="audit-panel">
+            <div id="empty-state" style="text-align:center; padding-top:150px; color:var(--slate); opacity:0.6;">
+                <h3>Awaiting Data</h3>
+                <p>Structural & Content Diagnostics will appear here.</p>
+            </div>
+
+            <div id="audit-results" class="hidden">
+                
+                <div class="seniority-box" id="sen-box">
+                    <div>
+                        <div class="sen-label">Perceived Seniority</div>
+                        <div class="sen-level" id="sen-level">Calculating...</div>
+                    </div>
+                    <div style="text-align:right; max-width:200px;">
+                        <div class="sen-advice" id="sen-advice">...</div>
+                    </div>
+                </div>
+
+                <div class="scorecard">
+                    <div class="score-circle">
+                        <svg><circle class="circle-bg" cx="35" cy="35" r="28"></circle><circle class="circle-fill" id="ring" cx="35" cy="35" r="28"></circle></svg>
+                        <div class="score-val" id="score-text">0%</div>
+                    </div>
+                    <div>
+                        <h3 style="margin:0;">CV Health Score</h3>
+                        <p style="margin:5px 0 0 0; font-size:0.8rem; color:var(--slate);">Combined Structural, Semantic & Commercial Rating</p>
+                    </div>
+                </div>
+
+                <h4 style="font-size:0.75rem; text-transform:uppercase; color:var(--slate); border-bottom:1px solid #e2e8f0; padding-bottom:5px; margin-bottom:15px;">Deep Diagnostics & Fixes</h4>
+                <div id="gem-list"></div>
+            </div>
+        </div>
+
+        <div class="col-interview" id="interview-panel">
+            <div class="int-header-box">
+                <div class="int-title"><span>🧠</span> Behavioral Forensics</div>
+            </div>
+            <div class="int-scroll" id="interview-feed">
+                <div style="text-align:center; padding-top:120px; opacity:0.4; color:white;">
+                    <p>Interview questions will generate based on<br>detected competencies.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DICTIONARIES
+        const interviewDB = {
+            "leadership": { type: "Leadership", q: "Tell me about a time you led a team through ambiguity.", agenda: "EQ & Change Management", green: "Acknowledges difficulty. Focuses on morale.", red: "Blames management." },
+            "finance": { type: "Commercial", q: "If I asked you to cut costs by 15%, where do you start?", agenda: "P&L Literacy", green: "Protects revenue.", red: "Cuts headcount immediately." },
+            "failure": { type: "Resilience", q: "Walk me through a genuine failure.", agenda: "Self-awareness", green: "Adopts ownership.", red: "Blames external factors." }
+        };
+        const weakVerbs = ["helped", "assisted", "responsible for", "worked on", "handled", "managed"];
+        
+        // BLUE OCEAN DICTIONARY
+        const redOceanWords = ["experienced", "professional", "hard working", "reliable", "various", "duties", "track record", "motivated", "dynamic"];
+        const blueOceanWords = ["invented", "pioneered", "founded", "patented", "first to", "only person", "selected as", "exclusive", "turnaround", "tripled", "award"];
+
+        // SENIORITY DICTIONARY
+        const stratWords = ["strategy", "vision", "roadmap", "stakeholder", "budget", "p&l", "forecast", "audit", "compliance", "governance", "orchestrated", "spearheaded"];
+        const tactWords = ["assisted", "helped", "supported", "worked", "task", "duty", "responsible"];
+
+        let currentScore = 0;
+
+        function runAnalysis() {
+            const cv = document.getElementById('cv').value;
+            const jd = document.getElementById('jd').value;
+            if(cv.length < 50) return alert("Please enter a valid CV.");
+
+            document.getElementById('loader').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('empty-state').classList.add('hidden');
+                document.getElementById('audit-results').classList.remove('hidden');
+                performAudit(cv, jd);
+            }, 1000);
+        }
+
+        function performAudit(cv, jd) {
+            const lowerCV = cv.toLowerCase();
+            let score = 0;
+            let gems = [];
+            
+            // 1. SENIORITY METER
+            let stratCount = 0;
+            let tactCount = 0;
+            stratWords.forEach(w => { if(lowerCV.includes(w)) stratCount++; });
+            tactWords.forEach(w => { if(lowerCV.includes(w)) tactCount++; });
+            
+            const senLevel = document.getElementById('sen-level');
+            const senAdvice = document.getElementById('sen-advice');
+            
+            if(stratCount > tactCount) {
+                senLevel.innerText = "EXECUTIVE / DIRECTOR";
+                senLevel.style.color = "#10b981"; // Green
+                senAdvice.innerText = "Your vocabulary demonstrates high-level strategic ownership.";
+                score += 20;
+            } else {
+                senLevel.innerText = "JUNIOR / MID-LEVEL";
+                senLevel.style.color = "#fbbf24"; // Yellow
+                senAdvice.innerText = `You use ${tactCount} tactical words (e.g. 'Assisted'). Swap these for strategic words to increase perceived salary value.`;
+                score += 5;
+            }
+
+            // 2. BLUE OCEAN STRATEGY (UNIQUENESS CHECK)
+            let blueCount = 0;
+            let redCount = 0;
+            blueOceanWords.forEach(w => { if(lowerCV.includes(w)) blueCount++; });
+            redOceanWords.forEach(w => { if(lowerCV.includes(w)) redCount++; });
+
+            if(blueCount > 0) {
+                score += 20;
+                gems.push({
+                    type: 'blue', // Blue Ocean
+                    t: 'Blue Ocean Strategy Detected 🌊', 
+                    b: `You are using high-value differentiator words like "${blueOceanWords.find(w => lowerCV.includes(w))}". This separates you from the "Red Ocean" of generic candidates.`, 
+                    f: 'Keep this! This is your Unique Selling Proposition (USP).',
+                    fixable: false
+                });
+            } else if (redCount > 2) {
+                gems.push({
+                    type: 'warn', 
+                    t: 'Drowning in the Red Ocean 🩸', 
+                    b: `Your CV relies on generic commodity words like "${redOceanWords.find(w => lowerCV.includes(w))}". You sound like everyone else.`, 
+                    f: 'Swap "Experienced Professional" for "Award-Winning Specialist".',
+                    fixable: true, 
+                    fixType: 'verb'
+                });
+            }
+
+            // 3. STRUCTURAL & CONTENT
+            if(!lowerCV.includes("summary") && !lowerCV.includes("profile")) {
+                gems.push({
+                    type:'crit', t:'Missing Executive Summary', 
+                    b:'Recruiters scan the first 3 lines. You have no summary.', 
+                    f:'Use the Architect to write one now.',
+                    fixable: true, fixType: 'summary'
+                });
+            } else {
+                score += 10;
+            }
+
+            const metrics = (cv.match(/£\d+|\d+%|\d+k/gi) || []).length;
+            if(metrics < 3) {
+                gems.push({
+                    type:'crit', t:'Missing Commercial Impact', 
+                    b:'Your CV lists duties, not results.', 
+                    f:'Add metrics to your roles.',
+                    fixable: true, fixType: 'metric'
+                });
+            } else {
+                score += 30;
+                gems.push({type:'good', t:'Commercial ROI Verified', b:`Found ${metrics} quantifiable proof points.`, f:'Ensure these are bolded.', fixable:false});
+            }
+
+            // Render Score
+            currentScore = Math.min(100, score + 20); // Base boost
+            const ring = document.getElementById('ring');
+            ring.style.strokeDashoffset = 176 - (currentScore/100)*176;
+            document.getElementById('score-text').innerText = currentScore + "%";
+
+            // Render Gems
+            document.getElementById('gem-list').innerHTML = gems.map(g => `
+                <div class="gem gem-${g.type}">
+                    <div class="gem-title">${g.t} ${g.type==='crit'?'🔴':(g.type==='good'?'🟢':(g.type==='blue'?'💎':'🟠'))}</div>
+                    <div class="gem-body">${g.b}</div>
+                    <div class="gem-fix">💡 ${g.f}</div>
+                    ${g.fixable ? `<button class="btn-fix" onclick="openConsultant('${g.fixType}')"><span>🛠️</span> Open Auto-Consultant</button>` : ''}
+                </div>`).join('');
+
+            // Render Interviews
+            const feed = document.getElementById('interview-feed');
+            feed.innerHTML = Object.values(interviewDB).map(d => `
+                <div class="int-card">
+                    <div class="int-card-head"><span class="int-type">${d.type}</span></div>
+                    <div class="int-q-box"><div class="int-q">"${d.q}"</div></div>
+                    <div class="int-meta"><div class="meta-row"><div class="green-flag">✅</div><div class="meta-content"><p>${d.green}</p></div></div></div>
+                </div>`).join('');
+        }
+
+        // --- CONSULTANT LOGIC ---
+        let activeType = "";
+        
+        function openConsultant(type) {
+            activeType = type;
+            const modal = document.getElementById('consultant-modal');
+            const content = document.getElementById('modal-content-area');
+            const title = document.getElementById('modal-title-text');
+            modal.style.display = 'flex';
+
+            if(type === 'summary') {
+                title.innerText = "📝 Executive Summary Architect";
+                content.innerHTML = `
+                    <div style="margin-bottom:15px; color:#475569; font-size:0.9rem;">I will build a high-impact summary for you. Just answer these 3 questions:</div>
+                    <input id="inp-role" class="chat-input" placeholder="1. Current Job Title (e.g. Project Manager)">
+                    <input id="inp-years" class="chat-input" placeholder="2. Years of Experience (e.g. 8)">
+                    <input id="inp-skill" class="chat-input" placeholder="3. Top Skill (e.g. Agile Delivery)">
+                    <button class="btn-primary" style="padding:12px; width:100%; justify-content:center;" onclick="generateSummary()">Generate Summary</button>
+                    <div class="result-box" id="res-box"><div class="result-text" id="res-text"></div><button class="copy-btn" onclick="copyText()">COPY</button></div>
+                `;
+            } else if (type === 'metric') {
+                title.innerText = "📊 Metric Multiplier";
+                content.innerHTML = `
+                    <div style="margin-bottom:15px; color:#475569; font-size:0.9rem;">Turn a duty into a commercial result.</div>
+                    <input id="inp-duty" class="chat-input" placeholder="What did you manage? (e.g. A budget)">
+                    <input id="inp-val" class="chat-input" placeholder="What was the value? (e.g. 50k)">
+                    <button class="btn-primary" style="padding:12px; width:100%; justify-content:center;" onclick="generateMetric()">Enhance Bullet Point</button>
+                    <div class="result-box" id="res-box"><div class="result-text" id="res-text"></div><button class="copy-btn" onclick="copyText()">COPY</button></div>
+                `;
+            } else if (type === 'verb') {
+                title.innerText = "⚡ Verb Upgrader";
+                content.innerHTML = `
+                    <div style="margin-bottom:15px; color:#475569; font-size:0.9rem;">Enter a boring task, I will make it sound like leadership.</div>
+                    <input id="inp-verb" class="chat-input" placeholder="e.g. Helped with the sales team">
+                    <button class="btn-primary" style="padding:12px; width:100%; justify-content:center;" onclick="generateVerb()">Upgrade</button>
+                    <div class="result-box" id="res-box"><div class="result-text" id="res-text"></div><button class="copy-btn" onclick="copyText()">COPY</button></div>
+                `;
+            }
+        }
+
+        function generateSummary() {
+            const r = document.getElementById('inp-role').value;
+            const y = document.getElementById('inp-years').value;
+            const s = document.getElementById('inp-skill').value;
+            const out = `Results-oriented ${r} with ${y}+ years of experience specializing in ${s}. Proven track record of delivering commercial value in high-growth environments through strategic leadership and operational excellence.`;
+            showResult(out);
+        }
+
+        function generateMetric() {
+            const d = document.getElementById('inp-duty').value;
+            const v = document.getElementById('inp-val').value;
+            const out = `• Orchestrated the management of [Context], overseeing a ${v} ${d} while maintaining 100% operational accuracy and driving efficiency gains.`;
+            showResult(out);
+        }
+
+        function generateVerb() {
+            const v = document.getElementById('inp-verb').value;
+            const out = `• Spearheaded the delivery of key initiatives within the team, ensuring alignment with broader strategic goals and enhancing output by [X]%.`;
+            showResult(out);
+        }
+
+        function showResult(text) {
+            document.getElementById('res-box').style.display = 'block';
+            document.getElementById('res-text').innerText = text;
+        }
+
+        function copyText() {
+            const t = document.getElementById('res-text').innerText;
+            navigator.clipboard.writeText(t);
+            alert("Copied to clipboard!");
+            closeModal();
+        }
+
+        function closeModal() { document.getElementById('consultant-modal').style.display = 'none'; }
+    </script>
+</body>
+</html>
